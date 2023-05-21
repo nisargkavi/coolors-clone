@@ -1,0 +1,53 @@
+.appContainerWrapper {
+  display: grid;
+  grid-template-rows: auto 100px;
+  height: calc(100vh - 90px);
+}
+
+.helperText {
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  color: #cbd5e0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.coloursGrid {
+  margin: 1rem 1rem 0;
+}
+
+@media (max-width: 800px) {
+  .colour {
+    grid-template-rows: 215px 50px 60px !important;
+  }
+}
+
+.colour {
+  border-radius: 4px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 50px 60px;
+  background: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.colour a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: #1a202c;
+  text-decoration: none;
+  cursor: pointer;
+  pointer-events: all;
+  transition: background 0.2s ease-in-out;
+}
+
+.colour a:hover {
+  background: #edf2f7;
+}
