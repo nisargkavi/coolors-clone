@@ -8,11 +8,6 @@ import useWindowDimensions from '@/app/utils/useWindowDimensions'
 import styles from "@/app/palette/[colorslug]/palette.module.css";
 import generateHex from "@/app/utils/generateHex";
 
-export const metadata = {
-  title: "Coolors Palette",
-  description: "Practice Coolors Project withg Next.js!",
-};
-
 const Page = ({ params }) => {
   const router = useRouter();
   const colorslug = params.colorslug;
