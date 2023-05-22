@@ -2,11 +2,6 @@
 import React, { useEffect } from 'react'
 import { useRouter } from "next/navigation";
 
-export const metadata = {
-  title: 'Generating...',
-  description: 'Generating...',
-}
-
 const Generate = () => {
   const router = useRouter();
   const generateRandomColorString = () => {
@@ -21,8 +16,11 @@ const Generate = () => {
   }
 
   useEffect(() => {
-    console.log('here');
-    generateRandomColorString()
+    document.title = 'Generating...';
+    generateRandomColorString();
+    return () => {
+      document.title = 'Default Page Title';
+    };
   }, [])
 
 
