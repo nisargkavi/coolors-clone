@@ -1,19 +1,36 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/Navbar";
 import toast, { Toaster } from "react-hot-toast";
 import { FiCopy, FiLock, FiShare2 } from "react-icons/fi";
-import useWindowDimensions from '@/app/utils/useWindowDimensions'
 import styles from "@/app/palette/[colorslug]/palette.module.css";
-import generateHex from "@/app/utils/generateHex";
+import { useGlobalContext } from "@/app/components/Context";
+
+const generateRandomColorString = () => {
+  let s = ""
+  for (let i = 0; i < 5; i++) {
+    let randomColor = Math.floor(Math.random() * 16777215).toString(16)
+    s += (randomColor + "-")
+  }
+  s = s.substring(0, s.length - 1)
+  return s;
+}
 
 const Page = ({ params }) => {
-  const router = useRouter();
+  // const router = useRouter();
   const colorslug = params.colorslug;
   const colorSlugArray = colorslug.split("-");
   const [colours, setColours] = useState(colorSlugArray);
-  const { width } = useWindowDimensions();
+  const { windowSize } = useGlobalContext();
+  const width = windowSize.width;
+  
+  const generateOnButton = () => {
+    toast.dismiss();
+    const newColours = generateRandomColorString().split("-");
+    setColours(newColours);
+    history.pushState({}, null, window.location.href.split("/")[0] + "/palette/" + newColours.join("-"));
+  };
 
   useEffect(() => {
     const generateOnSpace = function (ev) {
@@ -21,9 +38,10 @@ const Page = ({ params }) => {
       if (code === 32) {
         ev.preventDefault();
         toast.dismiss();
-        router.push(`/palette/${generateHex()}`);
-        // const newColours = generateHex().split("-");
-        // setColours(newColours);
+        // router.push(`/palette/${generateRandomColorString()}`);
+        const newColours = generateRandomColorString().split("-");
+        setColours(newColours);
+        history.pushState({}, null, window.location.href.split("/")[0] + "/palette/" + newColours.join("-"));
       }
     };
 
@@ -47,7 +65,7 @@ const Page = ({ params }) => {
   return (
     <>
       <Toaster position="bottom-left" reverseOrder={false} />
-      <Navbar/>
+      <Navbar generateOnButton={generateOnButton}/>
       <div className={styles.appContainerWrapper}>
         <div className={`${styles.coloursGrid} grid ${width > 800 ? `grid-flow-col grid-cols-${colours.length}` : `grid-flow-row grid-row-${colours.length}`} gap-4 mb-5`}>
           {colours &&
@@ -75,6 +93,13 @@ const Page = ({ params }) => {
           <p className="text-lg text-center my-10 text-[#464858] font-semibold">
             Press "Space" to generate new colours
           </p>
+        }
+        {width<800 &&
+          <div className="flex justify-center h-[70px]">
+            <button onClick={() => generateOnButton()} className="bg-blue-500 hover:bg-blue-700 my-2 p-4 text-white font-bold rounded-xl">
+              Generate!
+            </button>
+          </div>
         }
       </div>
     </>

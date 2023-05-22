@@ -2,7 +2,8 @@ import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Image from "next/image";
 import Link from "next/link";
-import generateHex from "@/app/utils/generateHex";
+// import generateHex from "@/app/utils/generateHex";
+// import { useGlobalContext } from "@/app/components/Context";
 
 export const metadata = {
   title: 'Coolors.co Next.js',
@@ -10,7 +11,8 @@ export const metadata = {
 }
 
 export default function Home() {
-  const randomColorString = generateHex();
+  // const randomColorString = generateHex();
+  // const { randomColorPalette } = useGlobalContext();
   return (
     <>
       <Navbar />
@@ -23,7 +25,7 @@ export default function Home() {
             Craft your ideal palette or draw inspiration from a myriad of exquisite color schemes.
           </p>
           <div>
-            <Link href={`/palette/${randomColorString}`}>
+            <Link href={`/generate`}>
               <p className="bg-[#0165fe] transition duration-150 hover:scale-105 .hover:shadow-lg text-white text-center font-semibold px-20 py-3 text-xl rounded-xl cursor-pointer">
                 Generate!
               </p>

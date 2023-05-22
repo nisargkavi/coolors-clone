@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import generateHex from '@/app/utils/generateHex'
+import generateHex from '@/app/generate/page'
 
 const LinkTo = ({propContent}) => {
-    const randomColorString = generateHex();
+    // const randomColorString = generateHex();
     return (
         <div>
             <Link href={`/palette/${randomColorString}`}>
