@@ -19,7 +19,7 @@ const Generate = () => {
     document.title = 'Generating...';
     generateRandomColorString();
     return () => {
-      document.title = 'Default Page Title';
+      document.title = 'Generating...';
     };
   }, [])
 

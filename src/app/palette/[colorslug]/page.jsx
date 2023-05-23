@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/Navbar";
 import toast, { Toaster } from "react-hot-toast";
 import { FiCopy, FiLock, FiShare2 } from "react-icons/fi";
@@ -18,13 +18,22 @@ const generateRandomColorString = () => {
 }
 
 const Page = ({ params }) => {
-  // const router = useRouter();
+  const router = useRouter();
   const colorslug = params.colorslug;
   const colorSlugArray = colorslug.split("-");
   const [colours, setColours] = useState(colorSlugArray);
+  // const [savedPalette, setSavedPalette] = React.useState(localStorage.getItem('paletteColors') ? JSON.parse(localStorage.getItem('paletteColors')) : []);
+  const [savedPalette, setSavedPalette] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('paletteColors')
+        ? JSON.parse(localStorage.getItem('paletteColors'))
+        : [];
+    }
+    return [];
+  });
   const { windowSize } = useGlobalContext();
   const width = windowSize.width;
-  
+
   const generateOnButton = () => {
     toast.dismiss();
     const newColours = generateRandomColorString().split("-");
@@ -47,10 +56,11 @@ const Page = ({ params }) => {
 
     document.addEventListener("keydown", generateOnSpace);
     document.title = "Coolors Palette";
+    setSavedPalette(savedPalette);
     return () => {
       document.removeEventListener("keydown", generateOnSpace);
     };
-  }, []);
+  }, [savedPalette]);
 
   const shareLink = () => {
     if (navigator.share) {
@@ -62,10 +72,38 @@ const Page = ({ params }) => {
     }
   };
 
+  const saveColorPalette = () => {
+    const paletteColorsString = colours.join("-");
+    let palette = [];
+    
+    if (typeof window !== 'undefined') {
+      const existingPalette = localStorage.getItem('paletteColors');
+      if (existingPalette) {
+        palette = JSON.parse(existingPalette);
+      }
+      if (!palette.includes(paletteColorsString)) {
+        const newColorPalette = [...palette, paletteColorsString];
+        localStorage.setItem("paletteColors", JSON.stringify(newColorPalette));
+        toast.success("Palette Saved!"); 
+      } else {
+        toast.error("Palette Already Exist!");
+      }
+    }
+  }
+
+  const removeSavedColorPalette = (index) => {
+    const savedColors = [...savedPalette];
+    savedColors.splice(index, 1);
+    setSavedPalette(savedColors);
+    localStorage.setItem('paletteColors', JSON.stringify(savedColors));
+  }
+
+
+
   return (
     <>
       <Toaster position="bottom-left" reverseOrder={false} />
-      <Navbar generateOnButton={generateOnButton}/>
+      <Navbar generateOnButton={generateOnButton} />
       <div className={styles.appContainerWrapper}>
         <div className={`${styles.coloursGrid} grid ${width > 800 ? `grid-flow-col grid-cols-${colours.length}` : `grid-flow-row grid-row-${colours.length}`} gap-4 mb-5`}>
           {colours &&
@@ -89,12 +127,17 @@ const Page = ({ params }) => {
             ))}
         </div>
 
-        {width>800 &&
-          <p className="text-lg text-center my-10 text-[#464858] font-semibold">
-            Press "Space" to generate new colours
-          </p>
+        {width > 800 &&
+          // <p className="text-lg text-center my-10 text-[#464858] font-semibold">
+          //   Press "Space" to generate new colours
+          // </p>
+          <div className="flex justify-center items-center">
+            <button onClick={() => saveColorPalette()} className="bg-blue-500 hover:bg-blue-700 my-2 p-4 h-[55px] text-white font-bold rounded-xl">
+              Save this palette!
+            </button>
+          </div>
         }
-        {width<800 &&
+        {width < 800 &&
           <div className="flex justify-center h-[70px]">
             <button onClick={() => generateOnButton()} className="bg-blue-500 hover:bg-blue-700 my-2 p-4 text-white font-bold rounded-xl">
               Generate!

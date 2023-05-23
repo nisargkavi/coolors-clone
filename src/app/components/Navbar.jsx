@@ -14,15 +14,16 @@ const Navbar = ({generateOnButton}) => {
                 <p className='text-[#0165fe] text-2xl cursor-pointer font-bold'>Coolors Clone</p>
             </Link>
             <div className='flex justify-center items-center text-lg font-semibold'>
-                {/* <p className='hover:border-b-2 border-[#0165fe] cursor-pointer'>My Colors</p> */}
-                {/* <div className='bg-[#ECECEC] mx-3 w-[1px] h-12'></div> */}
-                {/* <LinkTo propContent={<p className={`${ pathname.includes('/palette/') ? 'border-b-2':'hover:border-b-2' } border-[#0165fe] cursor-pointer`}>Generate!</p>} /> */}
+                <Link href='/saved-palette'>
+                    <p className={`${ pathname == '/saved-palette' ? 'border-b-2':'hover:border-b-2' } border-[#0165fe] cursor-pointer`}>My Palette</p>
+                </Link>
+                <div className='bg-[#ECECEC] mx-3 w-[1px] h-12'></div>
                 { pathname.includes('/palette/') ? 
-                <p onClick={() => generateOnButton()} className={`${ pathname.includes('/palette/') ? 'border-b-2':'hover:border-b-2' } border-[#0165fe] cursor-pointer`}>Generate!</p>
+                    <p onClick={() => generateOnButton()} className={`${ pathname.includes('/palette/') ? 'border-b-2':'hover:border-b-2' } border-[#0165fe] cursor-pointer`}>Generate!</p>
                 : 
-                <Link href={'/generate'}>
-                    <p className={`${ pathname.includes('/palette/') ? 'border-b-2':'hover:border-b-2' } border-[#0165fe] cursor-pointer`}>Generate!</p>
-                </Link> 
+                    <Link href={'/generate'}>
+                        <p className={`${ pathname.includes('/palette/') ? 'border-b-2':'hover:border-b-2' } border-[#0165fe] cursor-pointer`}>Generate!</p>
+                    </Link> 
                 }
                 
             </div>
