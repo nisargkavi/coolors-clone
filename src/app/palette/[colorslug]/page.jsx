@@ -22,16 +22,7 @@ const Page = ({ params }) => {
   const colorslug = params.colorslug;
   const colorSlugArray = colorslug.split("-");
   const [colours, setColours] = useState(colorSlugArray);
-  // const [savedPalette, setSavedPalette] = React.useState(localStorage.getItem('paletteColors') ? JSON.parse(localStorage.getItem('paletteColors')) : []);
-  const [savedPalette, setSavedPalette] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('paletteColors')
-        ? JSON.parse(localStorage.getItem('paletteColors'))
-        : [];
-    }
-    return [];
-  });
-  const { windowSize } = useGlobalContext();
+  const { windowSize,savedPalette,setSavedPalette } = useGlobalContext();
   const width = windowSize.width;
 
   const generateOnButton = () => {
@@ -74,35 +65,32 @@ const Page = ({ params }) => {
 
   const saveColorPalette = () => {
     const paletteColorsString = colours.join("-");
-    let palette = [];
     
     if (typeof window !== 'undefined') {
       const existingPalette = localStorage.getItem('paletteColors');
       if (existingPalette) {
-        palette = JSON.parse(existingPalette);
-      }
-      if (!palette.includes(paletteColorsString)) {
-        const newColorPalette = [...palette, paletteColorsString];
-        localStorage.setItem("paletteColors", JSON.stringify(newColorPalette));
-        toast.success("Palette Saved!"); 
+        const palette = JSON.parse(existingPalette);
+        if (!palette.includes(paletteColorsString)) {
+          const newColorPalette = [...palette, paletteColorsString];
+          localStorage.setItem("paletteColors", JSON.stringify(newColorPalette));
+          setSavedPalette(newColorPalette);
+          toast.success("Palette Saved!");
+        } else {
+          toast.error("Palette Already Exist!");
+        }
       } else {
-        toast.error("Palette Already Exist!");
+        const newColorPalette = [paletteColorsString];
+        localStorage.setItem("paletteColors", JSON.stringify(newColorPalette));
+        setSavedPalette(newColorPalette);
+        toast.success("Palette Saved!");
       }
     }
-  }
-
-  const removeSavedColorPalette = (index) => {
-    const savedColors = [...savedPalette];
-    savedColors.splice(index, 1);
-    setSavedPalette(savedColors);
-    localStorage.setItem('paletteColors', JSON.stringify(savedColors));
-  }
-
-
+  };
+  
 
   return (
     <>
-      <Toaster position="bottom-left" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
       <Navbar generateOnButton={generateOnButton} />
       <div className={styles.appContainerWrapper}>
         <div className={`${styles.coloursGrid} grid ${width > 800 ? `grid-flow-col grid-cols-${colours.length}` : `grid-flow-row grid-row-${colours.length}`} gap-4 mb-5`}>
@@ -138,10 +126,17 @@ const Page = ({ params }) => {
           </div>
         }
         {width < 800 &&
-          <div className="flex justify-center h-[70px]">
-            <button onClick={() => generateOnButton()} className="bg-blue-500 hover:bg-blue-700 my-2 p-4 text-white font-bold rounded-xl">
-              Generate!
-            </button>
+          <div className="flex justify-center gap-2 items-center">
+            <div className="">
+              <button onClick={() => generateOnButton()} className="bg-blue-500 hover:bg-blue-700 my-2 p-4 text-white font-bold rounded-xl">
+                Generate!
+              </button>
+            </div>
+            <div className="">
+              <button onClick={() => saveColorPalette()} className="bg-blue-500 hover:bg-blue-700 my-2 p-4 h-[55px] text-white font-bold rounded-xl">
+                Save this palette!
+              </button>
+            </div>
           </div>
         }
       </div>

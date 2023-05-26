@@ -23,11 +23,21 @@ const AppProvider = ({children}) => {
       
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+    const [savedPalette, setSavedPalette] = useState(() => {
+        if (typeof window !== 'undefined') {
+          return localStorage.getItem('paletteColors')
+            ? JSON.parse(localStorage.getItem('paletteColors'))
+            : [];
+        }
+        return [];
+    });
 
     return (
         <AppContext.Provider 
         value={{
-            windowSize
+            windowSize,
+            savedPalette,
+            setSavedPalette
         }}>
             {children}
         </AppContext.Provider>

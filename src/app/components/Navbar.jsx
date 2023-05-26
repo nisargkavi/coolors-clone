@@ -1,6 +1,7 @@
 "use client";
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import toast from 'react-hot-toast';
 // import { useGlobalContext } from '@/app/components/Context';
 // import LinkTo from '@/app/components/LinkTo';
 // import generateHex from '@/app/utils/generateHex'
@@ -15,7 +16,7 @@ const Navbar = ({generateOnButton}) => {
             </Link>
             <div className='flex justify-center items-center text-lg font-semibold'>
                 <Link href='/saved-palette'>
-                    <p className={`${ pathname == '/saved-palette' ? 'border-b-2':'hover:border-b-2' } border-[#0165fe] cursor-pointer`}>My Palette</p>
+                    <p className={`${ pathname == '/saved-palette' ? 'border-b-2':'hover:border-b-2' } border-[#0165fe] cursor-pointer`} onClick={() => toast.dismiss()}>My Palette</p>
                 </Link>
                 <div className='bg-[#ECECEC] mx-3 w-[1px] h-12'></div>
                 { pathname.includes('/palette/') ? 
