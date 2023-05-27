@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "@/app/components/Navbar";
 import toast, { Toaster } from "react-hot-toast";
-import { FiCopy, FiLock, FiShare2 } from "react-icons/fi";
+import { FiCopy, FiLock, FiUnlock ,FiShare2 } from "react-icons/fi";
 import styles from "@/app/palette/[colorslug]/palette.module.css";
 import { useGlobalContext } from "@/app/components/Context";
 
@@ -134,7 +134,7 @@ const Page = ({ params }) => {
                   {lockedIndices.includes(index) ? (
                     <FiLock className="text-[#00F] hover:scale-110 cursor-pointer text-2xl" onClick={() => unLockColorPalette(index)} />
                   ) : (
-                    <FiLock className="text-[#464858] hover:scale-110 cursor-pointer text-2xl" onClick={() => lockColorPalette(index)} />
+                    <FiUnlock className="text-[#464858] hover:scale-110 cursor-pointer text-2xl" onClick={() => lockColorPalette(index)} />
                   )}
                 </div>
               </div>
