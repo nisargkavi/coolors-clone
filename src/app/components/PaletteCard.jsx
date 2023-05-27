@@ -1,11 +1,10 @@
 "use client";
-// import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useGlobalContext } from "@/app/components/Context";
 import { AiFillDelete,AiOutlineShareAlt } from "react-icons/ai";
 import toast, { Toaster } from "react-hot-toast";
 
-const PaletteCard = ({ palette, index }) => {
+const PaletteCard = () => {
     const { savedPalette, setSavedPalette } = useGlobalContext();
     const removeSavedColorPalette = (index) => {
         const savedColors = [...savedPalette];

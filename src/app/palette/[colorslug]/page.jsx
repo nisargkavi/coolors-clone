@@ -1,29 +1,28 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/Navbar";
 import toast, { Toaster } from "react-hot-toast";
 import { FiCopy, FiLock, FiShare2 } from "react-icons/fi";
 import styles from "@/app/palette/[colorslug]/palette.module.css";
 import { useGlobalContext } from "@/app/components/Context";
 
-const generateRandomColorString = () => {
-  let s = ""
-  for (let i = 0; i < 5; i++) {
-    let randomColor = Math.floor(Math.random() * 16777215).toString(16)
-    s += (randomColor + "-")
-  }
-  s = s.substring(0, s.length - 1)
-  return s;
-}
-
 const Page = ({ params }) => {
-  const router = useRouter();
   const colorslug = params.colorslug;
   const colorSlugArray = colorslug.split("-");
   const [colours, setColours] = useState(colorSlugArray);
+  const [lockedIndices , setLockedIndices] = useState([]);
   const { windowSize,savedPalette,setSavedPalette } = useGlobalContext();
   const width = windowSize.width;
+
+  const generateRandomColorString = () => {
+    let s = ""
+    for (let i = 0; i <  5; i++) {
+      let randomColor = Math.floor(Math.random() * 16777215).toString(16)
+      s += (randomColor + "-")
+    }
+    s = s.substring(0, s.length - 1)
+    return s;
+  }
 
   const generateOnButton = () => {
     toast.dismiss();
@@ -39,7 +38,13 @@ const Page = ({ params }) => {
         ev.preventDefault();
         toast.dismiss();
         // router.push(`/palette/${generateRandomColorString()}`);
+        if (lockedIndices.length == 5) return;
         const newColours = generateRandomColorString().split("-");
+        if (lockedIndices.length > 0) {
+          lockedIndices.forEach((index) => {
+            newColours[index] = colours[index];
+          });
+        }
         setColours(newColours);
         history.pushState({}, null, window.location.href.split("/")[0] + "/palette/" + newColours.join("-"));
       }
@@ -51,7 +56,7 @@ const Page = ({ params }) => {
     return () => {
       document.removeEventListener("keydown", generateOnSpace);
     };
-  }, [savedPalette]);
+  }, [savedPalette,lockedIndices]);
 
   const shareLink = () => {
     if (navigator.share) {
@@ -86,6 +91,23 @@ const Page = ({ params }) => {
       }
     }
   };
+
+
+  const lockColorPalette = (index) => {
+    const newLockedIndices = [...lockedIndices, index];
+    setLockedIndices(newLockedIndices);
+    const colorLockedColorName = colours[index];
+    toast.success(`Locked #${colorLockedColorName}`);
+  }
+
+  const unLockColorPalette = (index) => {
+    const updatedLockedIndices = [...lockedIndices];
+    const indexOf = updatedLockedIndices.indexOf(index)
+    updatedLockedIndices.splice(indexOf, 1);
+    setLockedIndices(updatedLockedIndices);
+    const colorUnlocked = colours[index];
+    toast.success(`Unlocked #${colorUnlocked}`);
+  }
   
 
   return (
@@ -95,8 +117,8 @@ const Page = ({ params }) => {
       <div className={styles.appContainerWrapper}>
         <div className={`${styles.coloursGrid} grid ${width > 800 ? `grid-flow-col grid-cols-${colours.length}` : `grid-flow-row grid-row-${colours.length}`} gap-4 mb-5`}>
           {colours &&
-            colours.map((colorHex, i) => (
-              <div className={`${styles.colour}`} key={i}>
+            colours.map((colorHex, index) => (
+              <div className={`${styles.colour}`} key={index}>
                 <div className="transition ease-in-out delay-150" style={{ backgroundColor: `#${colorHex}` }} />
                 <p className="text-center text-[#464858] cursor-pointer font-semibold">{`#${colorHex}`}</p>
                 <div className="flex justify-around">
@@ -109,21 +131,27 @@ const Page = ({ params }) => {
                     }}
                   />
                   <FiShare2 className="text-[#464858] hover:scale-110 cursor-pointer text-2xl" onClick={() => shareLink()} />
-                  <FiLock className="text-[#464858] hover:scale-110 cursor-pointer text-2xl" />
+                  {lockedIndices.includes(index) ? (
+                    <FiLock className="text-[#00F] hover:scale-110 cursor-pointer text-2xl" onClick={() => unLockColorPalette(index)} />
+                  ) : (
+                    <FiLock className="text-[#464858] hover:scale-110 cursor-pointer text-2xl" onClick={() => lockColorPalette(index)} />
+                  )}
                 </div>
               </div>
             ))}
         </div>
 
         {width > 800 &&
-          // <p className="text-lg text-center my-10 text-[#464858] font-semibold">
-          //   Press "Space" to generate new colours
-          // </p>
-          <div className="flex justify-center items-center">
-            <button onClick={() => saveColorPalette()} className="bg-blue-500 hover:bg-blue-700 my-2 p-4 h-[55px] text-white font-bold rounded-xl">
-              Save this palette!
-            </button>
-          </div>
+          <>
+            <div className="flex justify-center items-center gap-5">
+            <p className="text-lg text-center my-10 text-[#464858] font-semibold">
+               Press "Space" to generate new colours
+            </p>
+              <button onClick={() => saveColorPalette()} className="bg-blue-500 hover:bg-blue-700 my-2 p-4 h-[55px] text-white font-bold rounded-xl">
+                Save this palette!
+              </button>
+            </div>
+          </>
         }
         {width < 800 &&
           <div className="flex justify-center gap-2 items-center">

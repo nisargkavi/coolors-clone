@@ -1,18 +1,16 @@
 "use client";
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import toast from 'react-hot-toast';
-// import { useGlobalContext } from '@/app/components/Context';
-// import LinkTo from '@/app/components/LinkTo';
-// import generateHex from '@/app/utils/generateHex'
 
 const Navbar = ({generateOnButton}) => {
     const pathname = usePathname();
-    // const { randomColorPalette } = useGlobalContext();
     return (
         <div className='flex sm:flex-row flex-col justify-between items-center py-3 sm:px-20 px-10 shadow-lg'>
             <Link href='/'>
-                <p className='text-[#0165fe] text-2xl cursor-pointer font-bold'>Coolors Clone</p>
+                <Image src="/logo.svg" width={100} height={30} className="h-auto" alt='coolors LOGO'/>
+                {/* <p className='text-[#0165fe] text-2xl cursor-pointer font-bold'>Coolors Clone</p> */}
             </Link>
             <div className='flex justify-center items-center text-lg font-semibold'>
                 <Link href='/saved-palette'>
