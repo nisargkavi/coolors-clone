@@ -26,7 +26,13 @@ const Page = ({ params }) => {
 
   const generateOnButton = () => {
     toast.dismiss();
+    if (lockedIndices.length == 5) return;
     const newColours = generateRandomColorString().split("-");
+    if (lockedIndices.length > 0) {
+      lockedIndices.forEach((index) => {
+        newColours[index] = colours[index];
+      });
+    }
     setColours(newColours);
     history.pushState({}, null, window.location.href.split("/")[0] + "/palette/" + newColours.join("-"));
   };
