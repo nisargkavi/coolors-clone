@@ -5,8 +5,6 @@ import generateHex from "@/app/generate/page";
 const AppContext = React.createContext();
 
 const AppProvider = ({children}) => {
-
-    // const [randomColorPalette,setRandomColorPalette] = useState(generateHex());
     const [windowSize, setWindowSize] = useState({
         width: 1920,
         height: 1920,

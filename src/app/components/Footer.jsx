@@ -6,7 +6,7 @@ const Footer = () => {
     return (
         <div className='absolute bottom-0 w-full'>
             <div className='flex justify-between items-center sm:px-20 px-8 bg-[#00a0fb] py-5'>
-                <p className='text-white lg:text-sm text-xs'>{copyright} {new Date().getFullYear()} Coolors Clone By <span className='font-bold cursor-pointer'>Nisarg Kavi</span></p>
+                <p className='text-white lg:text-sm text-xs'>{copyright} {new Date().getFullYear()} Coolors Clone By <a href="https://nisargkavi.in" target='_blank'><span className='font-bold cursor-pointer'>Nisarg Kavi</span></a></p>
                 <div className='flex justify-center gap-5 items-center text-lg font-semibold'>
                     <a href="https://github.com/nisargkavi" target={"_blank"} rel="noreferrer" className='hover:scale-110 transition-transform delay-50'>
                         <FiGithub className='text-white' />
