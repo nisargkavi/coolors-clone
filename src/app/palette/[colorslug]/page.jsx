@@ -1,22 +1,21 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Navbar from "@/app/components/Navbar";
-import toast, { Toaster } from "react-hot-toast";
-import { FiCopy, FiLock, FiUnlock ,FiShare2 } from "react-icons/fi";
-import styles from "@/app/palette/[colorslug]/palette.module.css";
-import { useGlobalContext } from "@/app/components/Context";
+import React, { useState, useEffect, Fragment } from "react"
+import Navbar from "@/app/components/Navbar"
+import toast, { Toaster } from "react-hot-toast"
+import { FiCopy, FiLock, FiUnlock, FiShare2 } from "react-icons/fi"
+import { useGlobalContext } from "@/app/components/Context"
 
 const Page = ({ params }) => {
   const colorslug = params.colorslug;
   const colorSlugArray = colorslug.split("-");
   const [colours, setColours] = useState(colorSlugArray);
-  const [lockedIndices , setLockedIndices] = useState([]);
-  const { windowSize,savedPalette,setSavedPalette } = useGlobalContext();
+  const [lockedIndices, setLockedIndices] = useState([]);
+  const { windowSize, savedPalette, setSavedPalette } = useGlobalContext();
   const width = windowSize.width;
 
   const generateRandomColorString = () => {
     let s = ""
-    for (let i = 0; i <  5; i++) {
+    for (let i = 0; i < 5; i++) {
       let randomColor = Math.floor(Math.random() * 16777215).toString(16)
       s += (randomColor + "-")
     }
@@ -62,7 +61,7 @@ const Page = ({ params }) => {
     return () => {
       document.removeEventListener("keydown", generateOnSpace);
     };
-  }, [savedPalette,lockedIndices]);
+  }, [savedPalette, lockedIndices]);
 
   const shareLink = () => {
     if (navigator.share) {
@@ -76,7 +75,7 @@ const Page = ({ params }) => {
 
   const saveColorPalette = () => {
     const paletteColorsString = colours.join("-");
-    
+
     if (typeof window !== 'undefined') {
       const existingPalette = localStorage.getItem('paletteColors');
       if (existingPalette) {
@@ -114,65 +113,55 @@ const Page = ({ params }) => {
     const colorUnlocked = colours[index];
     toast.success(`Unlocked #${colorUnlocked}`);
   }
-  
+
+  const isTooDark = (hexcolor) => {
+    const rgb = parseInt(hexcolor, 16)
+    var r = (rgb >> 16) & 0xff;
+    var g = (rgb >> 8) & 0xff;
+    var b = (rgb >> 0) & 0xff;
+    // var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+    const luma = (r + g + b) / 3;
+    return (luma < 128) ? 'text-white' : 'text-black';
+  }
+
 
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
       <Navbar generateOnButton={generateOnButton} />
-      <div className={styles.appContainerWrapper}>
-        <div className={`${styles.coloursGrid} grid ${width > 800 ? `grid-flow-col grid-cols-${colours.length}` : `grid-flow-row grid-row-${colours.length}`} gap-4 mb-5`}>
-          {colours &&
+      <div className="h-[calc(100vh-72px)] w-full">
+        <div className={`grid md:grid-flow-col h-full`}>
+          {
             colours.map((colorHex, index) => (
-              <div className={`${styles.colour}`} key={index}>
-                <div className="transition ease-in-out delay-150" style={{ backgroundColor: `#${colorHex}` }} />
-                <p className="text-center text-[#464858] cursor-pointer font-semibold">{`#${colorHex}`}</p>
-                <div className="flex justify-around">
-                  <FiCopy
-                    className="text-[#464858] hover:scale-110 active:scale-90 transition ease-in-out delay-50 cursor-pointer text-2xl"
-                    onClick={() => {
-                      navigator.clipboard
-                        .writeText(`#${colorHex}`)
-                        .then(toast.success(`#${colorHex} Copied!`));
-                    }}
-                  />
-                  <FiShare2 className="text-[#464858] hover:scale-110 cursor-pointer text-2xl" onClick={() => shareLink()} />
-                  {lockedIndices.includes(index) ? (
-                    <FiLock className="text-[#00F] hover:scale-110 cursor-pointer text-2xl" onClick={() => unLockColorPalette(index)} />
-                  ) : (
-                    <FiUnlock className="text-[#464858] hover:scale-110 cursor-pointer text-2xl" onClick={() => lockColorPalette(index)} />
-                  )}
+              <Fragment key={index}>
+                <div className="relative group">
+                  <div className="h-full w-full transition ease-in-out delay-150" style={{ backgroundColor: `#${colorHex}` }}></div>
+                  <div className="bottom-40 absolute opacity-0 group-hover:opacity-100 transition-opacity w-full">
+                    <div className="flex flex-col items-center gap-6">
+                      <FiCopy
+                        className={`${isTooDark(colorHex)} hover:scale-110 active:scale-90 transition ease-in-out delay-50 cursor-pointer text-2xl`}
+                        onClick={() => {
+                          navigator.clipboard
+                            .writeText(`#${colorHex}`)
+                            .then(toast.success(`#${colorHex} Copied!`));
+                        }}
+                      />
+                      <FiShare2 className={`${isTooDark(colorHex)} hover:scale-110 cursor-pointer text-2xl`} onClick={() => shareLink()} />
+                      {lockedIndices.includes(index) ? (
+                        <FiLock className="text-[#00F] hover:scale-110 cursor-pointer text-2xl" onClick={() => unLockColorPalette(index)} />
+                      ) : (
+                        <FiUnlock className={`${isTooDark(colorHex)} hover:scale-110 cursor-pointer text-2xl`} onClick={() => lockColorPalette(index)} />
+                      )}
+                    </div>
+                  </div>
+                  <div className="absolute bottom-20 right-0 left-0">
+                    <p className={`text-center text-2xl uppercase font-medium ${isTooDark(colorHex)}`}>#{colorHex}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              </Fragment>
+            ))
+          }
         </div>
-
-        {width > 800 &&
-          <>
-            <div className="flex justify-center items-center gap-5">
-            <p className="text-lg text-center my-10 text-[#464858] font-semibold">
-               Press "Space" to generate new colours
-            </p>
-              <button onClick={() => saveColorPalette()} className="bg-blue-500 hover:bg-blue-700 my-2 p-4 h-[55px] text-white font-bold rounded-xl">
-                Save this palette!
-              </button>
-            </div>
-          </>
-        }
-        {width < 800 &&
-          <div className="flex justify-center gap-2 items-center">
-            <div className="">
-              <button onClick={() => generateOnButton()} className="bg-blue-500 hover:bg-blue-700 my-2 p-4 text-white font-bold rounded-xl">
-                Generate!
-              </button>
-            </div>
-            <div className="">
-              <button onClick={() => saveColorPalette()} className="bg-blue-500 hover:bg-blue-700 my-2 p-4 h-[55px] text-white font-bold rounded-xl">
-                Save this palette!
-              </button>
-            </div>
-          </div>
-        }
       </div>
     </>
   );
