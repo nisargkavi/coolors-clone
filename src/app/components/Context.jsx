@@ -1,6 +1,5 @@
-"use client";
-import React,{useState,useEffect,useContext} from "react";
-import generateHex from "@/app/generate/page";
+"use client"
+import React,{useState,useEffect,useContext} from "react"
 
 const AppContext = React.createContext();
 
